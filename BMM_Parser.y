@@ -1,38 +1,31 @@
 %{
     #include<stdio.h>
+    int yylex(void);
+    void yyerror();
 %}
-%token NUMBER TOKHEAT STATE TOKTARGET TOKTEMPERATURE
+%token INTEGER
 
 %%
 
-commands:
-        | commands command
-command:
-        heat_switch
+program:
+        program expr '\n' {printf("%d\n",$2); }
         |
-        target_set
         ;
-heat_switch:
-        TOKHEAT STATE
-        {
-            printf("\tHeat turned on or off\n");
-        }
+expr:
+        INTEGER         {$$=$1;}
+        |       
+        expr '+' expr   {$$=$1+$3;}
+        |
+        expr '-' expr   {$$=$1-$3;}
         ;
-target_set:
-        TOKTARGET TOKTEMPERATURE NUMBER
-        {
-            printf("\Temperature set\n");
-        }
-        ;
+
 
 %%
 
-void yyerror(const char *str){
-    fprintf(stderr,"error : %s\n",str);
-}
 
-int yywrap(){
-    return 1;
+
+void yyerror(char *str){
+    fprintf(stderr,"Error : %s\n",str);
 }
 
 int main(){

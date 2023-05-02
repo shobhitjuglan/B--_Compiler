@@ -5,13 +5,13 @@
 
 %%
 
-[0-9]+ return NUMBER;
-heat return TOKHEAT;
-on|off return STATE;
-target return TOKTARGET;
-temperature return TOKTEMPERATURE;
-\n /* ignore end of line */ ;
-[ \t]+ /* ignore whitespace */ ;
+[0-9]+         { yylval=atoi(yytext); return INTEGER; }
+[-+\n]           return *yytext;
+[ \t]            ;
+.                yyerror("Invalid Character");
 
 %%
 
+int yywrap(){
+    return 0;
+}
