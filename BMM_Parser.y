@@ -39,7 +39,7 @@ subst:
     | {printf("Wrong Command Given"); exit(0);}
     ;
 commentrem:
-    REM {printf("Rem found!\n");} ignoreline 
+    REM ignoreline {printf("Rem found!\n");}  
     ;
 ignoreline:
     IGN
