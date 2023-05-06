@@ -3,6 +3,7 @@
     #include<string.h>
     #include<stdlib.h>
     #include "toptemp.tab.h"
+    #include "toptemp.tab.h"
 %}
 
 %%
