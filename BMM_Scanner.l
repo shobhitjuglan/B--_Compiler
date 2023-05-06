@@ -2,8 +2,7 @@
     #include<stdio.h>
     #include<string.h>
     #include<stdlib.h>
-    #include "toptemp.tab.h"
-    #include "toptemp.tab.h"
+    #include "BMM_Parser.tab.h"
 %}
 
 %%

@@ -17,16 +17,16 @@
 %%
 
 program:
-    program subprogram {printf("This is 1\n");}
-    |subprogram {printf("This is 2\n");}
-    ;
+    subprogram {exit(0);}
 subprogram:
-    stmt EOL subprogram {printf("This is 4\n");}
+     stmt subprogram {printf("This is 4\n");}
     |stmt {printf("This is 3\n");}
     ;
 stmt:
-      NUM subst
-    | {printf("Error: No Address given\n");exit(0);}
+      NUM subst EOL {printf("This is stmt with EOL\n");}
+    | NUM subst {printf("This is stmt without EOL\n");}
+    | subst EOL {printf("Error: No Address given\n");exit(0);}
+    | subst {printf("Error: No Address given\n");exit(0);}
     ;
 subst:
     commentrem
