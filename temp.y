@@ -11,15 +11,18 @@
 
 %%
 
-program:
-    |program subprogram
+program: {printf("Hello\n");}
+    |
+    subprogram program  {printf("1\n");}
+    |
+    subprogram {printf("2\n");}
     ;
 subprogram:
-    |subprogram EOL stmt EOL
-    |stmt EOL
+    |stmt EOL subprogram
+    |stmt
     ;
 stmt:
-    |NUM subst
+    | NUM subst
     | subst {perror("Invalid Input!");}
     ;
 subst:
@@ -39,86 +42,97 @@ subst:
     | IGN {perror("Invalid Input!");}
     ;
 data:
-    DATA COMMA NUM
+    | DATA COMMA NUM
     | DATA COMMA STRING
     | NUM
     | STRING
+    {
+        printf("%s is the string\n", STRING);
+    }
     ;
 def:
-    DEF FUNC OPA VAR CPA EQUAL equation
+    |DEF FUNC OPA VAR CPA EQUAL equation
     | DEF FUNC EQUAL equation
+    {
+        printf("%s\n is a function",$2);
+    }
     ;
 dim:
-    dim COMMA VAR OPA NUM CPA
+    | dim COMMA VAR OPA NUM CPA
     | dim COMMA VAR OPA NUM COMMA NUM CPA
     | VAR OPA NUM CPA
     | VAR OPA NUM COMMA NUM CPA
     ;
 endprog:
-    END
+    | END
     ;
 forloop:
-    FOR VAR EQUAL NUM TO NUM STEP NUM subprogram NEXT NUM
+    | FOR VAR EQUAL NUM TO NUM STEP NUM subprogram NEXT NUM
     ;
 gotoline:
-    GOSUB NUM //Push RA to stack, which is next in line to this stmt after jumping to the given address
+    | GOSUB NUM //Push RA to stack, which is next in line to this stmt after jumping to the given address
     | GOTO NUM //Just jump to this address
     ;
 ifthen:
-    IF equation THEN NUM //Jump to new NUM which is the address else ignore then
+    | IF equation THEN NUM //Jump to new NUM which is the address else ignore then
     ;
 let:
-    LET VAR EQUAL VAR
+    | LET VAR EQUAL VAR
     | LET VAR EQUAL NUM
     | LET VAR EQUAL FLOAT
     ;
 inputvar:
-    INPUT VAR
+    | INPUT VAR
     ;
 print:
-    PRINT line
+    | PRINT line
     ;
 line: 
-    equation
+    | equation
     | PRTEXP
     | line COMMA equation
     | line COMMA PRTEXP
     ;
 equation:
-    factor
+    | factor
     | equation ADD factor
     | equation SUB factor
     ;
 factor:
-    term
+    | term
     | factor PRO term
     | factor DIV term
     ;
 term:
-    num
+    | num
     | SUB num
     ;
 num:
-    number
+    | number
     | number POWER number
     ;
 number:
-    value
+    | value
     | OPA equation CPA
     ;
 value:
-    NUM
+    | NUM
     | VAR
+    ;
 commentrem:
-    REM ignoreline 
+    |REM ignoreline 
     ;
 ignoreline:
-    IGN
-returntomain:
-    RETURN //pop RA and goto that return address
+    |IGN
+    {
+        printf("This was ignored %s\n",IGN);
+    }
     ;
-stop:
-    STOP //End code here
+returntomain:
+    |RETURN 
+    ;
+stop: 
+    |STOP 
     ;
   
 %%

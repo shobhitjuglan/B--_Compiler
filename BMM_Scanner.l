@@ -2,14 +2,13 @@
     #include<stdio.h>
     #include<string.h>
     #include<stdlib.h>
-    #include "BMM_Parser.tab.h"
+    #include "toptemp.tab.h"
 %}
 
 %%
 
-[a-z]+                                   { yyerror("Error! Unrecognised Input");}
 [0-9]+                                   { yylval=atoi(yytext); return NUM; }
-[0-9]+\.{1}[0-9]+                        { yylval=atoi(yytext); return FLOAT; }
+[0-9]+\.[0-9]+                           { yylval=atoi(yytext); return FLOAT; }
 "DATA"                                   { return DATA;}
 "DEF"                                    { return DEF;}
 "DIM"                                    { return DIM;}
@@ -48,12 +47,12 @@
 ","                                      { return COMMA; }
 "("                                      { return OPA; }
 ")"                                      { return CPA; }
-"FN"[A-Z][0-9]?\#?\$?\!?                 { return FUNC; }
-[A-Z][0-9]?\#?\$?\!?                     { return VAR;}
-\"[A-Z0-9]+\"                          { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = *strdup(yytext); return STRING; }
-\"[A-Z0-9\s\!\+\-\*\/]+\"                { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = *strdup(yytext); return PRTEXP; }
-[A-Z0-9\s\!\+\-\*\/]+                    { yylval = *strdup(yytext); return IGN; }
-[\n]                                     { return EOL; }
+FN[A-Z]\([A-Z]\)?                         { return FUNC; }
+[A-Z][0-9]?[\#|\$|\!]?                   { return VAR;}
+\"[A-Z0-9]+\"                            { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = strdup(yytext); return STRING; }
+\"[A-Z0-9\s\!\+\-\*\/]+\"                { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = strdup(yytext); return PRTEXP; }
+[A-Z0-9\s\!\+\-\*\/]*                    { yylval = strdup(yytext); return IGN; }
+[\n]                                     { return EOL;}
 [ \t]                                    ;
 
 %%
