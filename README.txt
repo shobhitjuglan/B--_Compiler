@@ -1,8 +1,8 @@
-1. This is a basic B-- language lexer and parser program. 
+1. This is a basic B-- language lexer and parser project. 
 
-2. So, we will have to start by copying either CorrectSample.bmm or IncorrectSample.bmm to the input.txt file.
+2. So, we will start by copying either CorrectSample.bmm or IncorrectSample.bmm to the input.txt file.
 
-3. After that, after opening the terminal to this directory, write the commands in order.
+3. After that, after opening the terminal to this directory, write the commands in the terminal in order.
 
 4. flex BMM_Scanner.l
    This will make a lex.yy.c file as well.

@@ -2,15 +2,15 @@
     #include<stdio.h>
     #include<string.h>
     #include<stdlib.h>
-    #include "BMM_Parser.tab.h"
+    #include "BMM_parser.tab.h"
 %}
 
 %%
 
 [0-9]+                                   { yylval=atoi(yytext); return NUM; }
-[0-9]+\.[0-9]{1,6}                       { yylval=atoi(yytext); return FLOAT; }
-[0-9]+\.[0-9]{7,12}                      { yylval=atoi(yytext); return DOUBLE; }
-[0-9]+\.[0-9]{13,}                       { printf("Precision not possible! Limit to 12 decimal places for double!\n"); exit(0);}
+[0-9]+\.[0-9]{1,6}                       { yylval=atof(yytext); return FLOAT; }
+[0-9]+\.[0-9]{7,15}                      { yylval=strtod(yytext, NULL); return DOUBLE; }
+[0-9]+\.[0-9]{16,}                       { printf("Precision not possible! Limit to 12 decimal places for double!\n"); exit(0);}
 "DATA"                                   { return DATA;}
 "DEF"                                    { return DEF;}
 "DIM"                                    { return DIM;}
@@ -54,9 +54,8 @@ FN[A-Z]\(?[A-Z]?\)?                        { return FUNC; }
 [A-Z][\!]                                { return VARFLOAT;}
 [A-Z][\$]                                { return VARSTRING;}
 [A-Z][\#]                                { return VARDOUBLE;}
-\"[A-Z0-9]+\"                            { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = strdup(yytext); return STRING; }
-\"[A-Z0-9\s\!\+\-\*\/]+\"                { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = strdup(yytext); return PRTEXP; }
-[A-Z0-9\s\!\+\-\*\/]*                    { yylval = strdup(yytext); return IGN; }
+\"[A-Z0-9 \!\+\-\*\/]+\"                 { yytext[strlen(yytext)-1]='\0'; yytext+=1; yylval = strdup(yytext); return STRING; }
+[A-Z0-9\!\+\-\*\/]*                      { yylval = strdup(yytext); return IGN; }
 [\n]                                     { return EOL;}
 [ \t]                                    ;
 .                                        { printf("Error! Unrecognised token!\n"); exit(0);}
