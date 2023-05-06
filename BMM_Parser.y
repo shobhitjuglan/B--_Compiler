@@ -6,122 +6,121 @@
     extern FILE *yyin;
     int yylex(void);
     void yyerror();
+    int intx;
+    float floatx;
+    double doublex;
+    char* stringx;
+    int f;
 %}
-%token NUM FLOAT DATA DEF DIM END FOR TO STEP NEXT GOSUB GOTO IF THEN LET INPUT PRINT REM RETURN STOP NOTEQUAL SIZE BEQ BNE BGE BLE BGT BLT NOT AND OR XOR EQUAL ADD SUB PRO DIV POWER SEMCOM COMMA OPA CPA FUNC VAR STRING PRTEXP IGN EOL 
+%token NUM FLOAT DOUBLE ERROR DATA DEF DIM END FOR TO STEP NEXT GOSUB GOTO IF THEN LET INPUT PRINT REM RETURN STOP NOTEQUAL SIZE BEQ BNE BGE BLE BGT BLT NOT AND OR XOR EQUAL ADD SUB PRO DIV POWER SEMCOM COMMA OPA CPA FUNC VARINT VARFLOAT VARSTRING VARDOUBLE STRING PRTEXP IGN EOL 
 
 %%
 
 program:
-    program subprogram
+    program subprogram {printf("This is 1\n");}
+    |subprogram {printf("This is 2\n");}
+    ;
 subprogram:
-    subprogram EOL stmt EOL
-    | stmt EOL
+    stmt EOL subprogram {printf("This is 4\n");}
+    |stmt {printf("This is 3\n");}
     ;
 stmt:
-    NUM subst
-    | subst {perror("Invalid Input!");}
+      NUM subst
+    | {printf("Error: No Address given\n");exit(0);}
     ;
 subst:
-    data
-    | def
-    | dim
-    | endprog
-    | forloop
+    commentrem
+    | returntomain {printf("This is returntomain\n");}
+    | stop {printf("This is stop\n");}
+    | let {printf("Let set\n");}
+    | inputvar {printf("Input put\n");}
     | gotoline
-    | ifthen
-    | let
-    | inputvar
-    | print
-    | commentrem
-    | returntomain
-    | stop
-    | IGN {perror("Invalid Input!");}
+    | endprog
+    | {printf("Wrong Command Given"); exit(0);}
     ;
-data:
-    data COMMA NUM
-    | data COMMA STRING
-    | NUM
-    | STRING
-    ;
-def:
-    DEF FUNC OPA VAR CPA EQUAL equation
-    | DEF FUNC EQUAL equation
-    ;
-dim:
-    dim COMMA VAR OPA NUM CPA
-    | dim COMMA VAR OPA NUM COMMA NUM CPA
-    | VAR OPA NUM CPA
-    | VAR OPA NUM COMMA NUM CPA
-    ;
-endprog:
-    END
-    ;
-forloop:
-    FOR VAR EQUAL NUM TO NUM STEP NUM subprogram NEXT NUM
-    ;
-gotoline:
-    GOSUB NUM //Push RA to stack, which is next in line to this stmt after jumping to the given address
-    | GOTO NUM //Just jump to this address
-    ;
-ifthen:
-    IF equation THEN NUM //Jump to new NUM which is the address else ignore then
-    ;
-let:
-    LET VAR EQUAL VAR
-    | LET VAR EQUAL NUM
-    | LET VAR EQUAL FLOAT
-    ;
-inputvar:
-    INPUT VAR
-    ;
-print:
-    PRINT line
-    ;
-line: 
-    equation
-    | PRTEXP
-    | line COMMA equation
-    | line COMMA PRTEXP
-    ;
-equation:
-    factor
-    | equation ADD factor
-    | equation SUB factor
-    ;
-factor:
-    term
-    | factor PRO term
-    | factor DIV term
-    ;
-term:
-    num
-    | SUB num
-    ;
-num:
-    number
-    | number POWER number
-    ;
-number:
-    value
-    | OPA equation CPA
-    ;
-value:
-    NUM
-    | VAR
 commentrem:
-    REM ignoreline 
+    REM {printf("Rem found!\n");} ignoreline 
     ;
 ignoreline:
     IGN
+    ;
 returntomain:
-    RETURN //pop RA and goto that return address
+    RETURN 
+    {
+        printf("Return hit\n");
+    }
     ;
-stop:
-    STOP //End code here
+stop: 
+    STOP 
+    {
+        printf("stop hit\n"); 
+        exit(0);
+    }
     ;
-  
+endprog: 
+    END 
+    {
+        printf("end hit\n"); 
+        exit(0);
+    }
+    ;
+let:
+    LET VARINT EQUAL NUM {printf("Var = num\n")}
+    | LET VARFLOAT EQUAL FLOAT {printf("Var = float\n")}
+    | LET VARSTRING EQUAL STRING {printf("Var = string\n")}
+    | LET VARDOUBLE EQUAL DOUBLE {printf("Var = double\n")}
+    | LET leterror
+    ;
+leterror: VARINT EQUAL varint 
+    | VARFLOAT EQUAL varfloat 
+    | VARSTRING EQUAL varstring 
+    | VARDOUBLE EQUAL vardouble 
+    ;
+varint: VARINT {printf("Var = Var");}
+    | FLOAT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARFLOAT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | STRING {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARSTRING {printf("Error! Unmatching Type!\n"); exit(0);}
+    | DOUBLE {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARDOUBLE {printf("Error! Unmatching Type!\n"); exit(0);}
+    ;
+varfloat: VARFLOAT {printf("Var = Var");}
+    | NUM {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARINT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | STRING {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARSTRING {printf("Error! Unmatching Type!\n"); exit(0);}
+    | DOUBLE {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARDOUBLE {printf("Error! Unmatching Type!\n"); exit(0);}
+    ;
+varstring: VARSTRING {printf("Var = Var");}
+    | FLOAT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARFLOAT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | NUM {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARINT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | DOUBLE {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARDOUBLE {printf("Error! Unmatching Type!\n"); exit(0);}
+    ;
+vardouble: VARDOUBLE {printf("Var = Var");}
+    | FLOAT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARFLOAT {printf("Error! Unmatching Type!\n"); exit(0);}
+    | STRING {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARSTRING {printf("Error! Unmatching Type!\n"); exit(0);}
+    | NUM {printf("Error! Unmatching Type!\n"); exit(0);}
+    | VARINT {printf("Error! Unmatching Type!\n"); exit(0);}
+    ;
+inputvar:
+    INPUT {printf("Input something\n");} var
+    ;
+var: VARINT {f=scanf("%d", &intx);}
+    | VARFLOAT {f=scanf("%f", &floatx);}
+    | VARDOUBLE {f=scanf("%lf", &doublex);}
+    | VARSTRING {f=scanf("%s", &stringx);}
+    ;
+gotoline:
+    GOSUB NUM {printf("Gosub found!\n");} //Push RA to stack, which is next in line to this stmt after jumping to the given address
+    | GOTO NUM {printf("Goto found!\n");} //Just jump to this address 
+    ;
 %%
-
 
 
 void yyerror(char *str){
@@ -138,8 +137,8 @@ int main(){
     FILE *file = fopen(filename, "r");
     char line[1024];
 
-    if (file) {
-        while (fgets(line, sizeof(line), file)) {
+    if (file){
+        while (fgets(line, sizeof(line), file)){
             num_lines++;
         }
         fclose(file);
