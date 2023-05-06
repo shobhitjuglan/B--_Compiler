@@ -49,7 +49,7 @@
 ","                                      { return COMMA; }
 "("                                      { return OPA; }
 ")"                                      { return CPA; }
-FN[A-Z]\([A-Z]\)?                        { return FUNC; }
+FN[A-Z]\(?[A-Z]?\)?                        { return FUNC; }
 [A-Z][0-9]?                              { return VARINT;}
 [A-Z][\!]                                { return VARFLOAT;}
 [A-Z][\$]                                { return VARSTRING;}

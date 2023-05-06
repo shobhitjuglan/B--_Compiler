@@ -19,7 +19,9 @@ subprogram:
     |stmt {printf("This is 3\n");}
     ;
 stmt: 
-    NUM subst EOL {printf("This is stmt with EOL\n");}
+    NUM END EOL {printf("Error : END not at the end\n"); exit(0);}
+    | NUM END {printf("========================EXITING================================"); exit(0);}
+    | NUM subst EOL {printf("This is stmt with EOL\n");}
     | NUM subst {printf("This is stmt without EOL\n");}
     | subst EOL {printf("Error: No Address given\n");exit(0);}
     | subst {printf("Error: No Address given\n");exit(0);}
@@ -33,10 +35,59 @@ subst:
     | inputvar
     | gotoline
     | endprog
+    | def
     | {printf("Wrong Command Given"); exit(0);}
     ;
 commentrem:
     REM ignoreline {printf("Rem found!\n");}  
+    ;
+def:
+      DEF FUNC VARINT EQUAL equation
+    | DEF FUNC VARFLOAT EQUAL equation
+    | DEF FUNC VARDOUBLE EQUAL equation
+    | DEF FUNC EQUAL equation
+    ;
+inequation:
+    equation BEQ equation
+    | equation BEQ equation
+    | equation BNE equation
+    | equation BGE equation
+    | equation BLE equation
+    | equation BGT equation
+    | equation BLT equation
+logicalequation:
+    NOT logicalequation
+    |logicalequation AND logicalequation
+    |logicalequation OR logicalequation
+    |logicalequation XOR logicalequation
+    | equation
+equation:
+    factor
+    | equation ADD factor
+    | equation SUB factor
+    ;
+factor:
+    term
+    | factor PRO term
+    | factor DIV term
+    ;
+term:
+    num 
+    | SUB num {printf("NEGATION\n");}
+    ;
+num:
+    number {printf("NO POWER\n");}
+    | number POWER number {printf("Full POWER\n");}
+    ;
+number:
+    value {printf("We got a value\n");}
+    | OPA equation CPA
+    ;
+value:
+    NUM {printf("We got a num = %d\n",$1);}
+    | VARINT {printf("We got a var = %d\n",$1);}
+    | VARFLOAT {printf("We got a var = %d\n",$1);}
+    | VARDOUBLE {printf("We got a var = %d\n",$1);}
     ;
 ignoreline:
     IGN
