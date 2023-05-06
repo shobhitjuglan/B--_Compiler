@@ -6,22 +6,23 @@
     extern FILE *yyin;
     int yylex(void);
     void yyerror();
+    int addr_arr[500];
 %}
 %token NUM FLOAT DATA DEF DIM END FOR TO STEP NEXT GOSUB GOTO IF THEN LET INPUT PRINT REM RETURN STOP NOTEQUAL SIZE BEQ BNE BGE BLE BGT BLT NOT AND OR XOR EQUAL ADD SUB PRO DIV POWER SEMCOM COMMA OPA CPA FUNC VAR STRING PRTEXP IGN EOL 
 
 %%
 
 program:
-    program subprogram {printf("This is 1\n");}
-    |subprogram {printf("This is 2\n");}
-    ;
+    subprogram {exit(0);}
 subprogram:
-     stmt EOL subprogram {printf("This is 4\n");}
+     stmt subprogram {printf("This is 4\n");}
     |stmt {printf("This is 3\n");}
     ;
 stmt:
-      NUM subst
-    | {printf("Error: No Address given\n");exit(0);}
+      NUM subst EOL {printf("This is stmt with EOL\n");}
+    | NUM subst {printf("This is stmt without EOL\n");}
+    | subst EOL {printf("Error: No Address given\n");exit(0);}
+    | subst {printf("Error: No Address given\n");exit(0);}
     ;
 subst:
     commentrem {printf("This is commentrem\n");}
@@ -81,10 +82,11 @@ int main(){
     //counting finished
 
     
-    FILE *fp; int i;
+    FILE *fp; 
     fp = fopen(filename,"r");
     yyin = fp;
-    for(i=0;i<num_lines;i++)
+    for(int i=0;i<num_lines;i++)
         yyparse();
+
     return 0;
 }
