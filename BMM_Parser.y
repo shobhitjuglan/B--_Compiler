@@ -18,7 +18,7 @@ subprogram:
      stmt subprogram {printf("This is 4\n");}
     |stmt {printf("This is 3\n");}
     ;
-stmt:
+stmt: 
     NUM subst EOL {printf("This is stmt with EOL\n");}
     | NUM subst {printf("This is stmt without EOL\n");}
     | subst EOL {printf("Error: No Address given\n");exit(0);}
@@ -42,7 +42,7 @@ ignoreline:
     IGN
     ;
 returntomain:
-    RETURN 
+    RETURN    
     {
         printf("Return hit\n");
     }
