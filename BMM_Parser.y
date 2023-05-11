@@ -27,18 +27,18 @@ stmt:
     | subst {printf("Error: No Address given\n");exit(0);}
     ;
 subst:
-    {printf("Comment!\n");} commentrem
+    commentrem {printf("Comment!\n");} 
     | data {printf("Data added\n");}
     | returntomain
     | stop
     | let
     | inputvar
     | gotoline
-    | {printf("Defining a function!\n");} def
-    | {printf("Branch if!\n");} ifthen
-    | {printf("Print statement!\n");} print
+    | def {printf("Defining a function!\n");} 
+    | ifthen {printf("Branch if!\n");} 
+    | print {printf("Print statement!\n");} 
     | dim
-    | {printf("Loop detected!\n");} forloop
+    | forloop {printf("Loop detected!\n");} 
     | {printf("Wrong Command Given"); exit(0);}
     ;
 commentrem:
